@@ -79,7 +79,7 @@ export default function Auth() {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${window.location.origin}/`
+          redirectTo: window.location.origin
         }
       });
       
@@ -88,7 +88,7 @@ export default function Auth() {
       console.error('Google auth error:', error);
       toast({
         title: "Authentication Error",
-        description: error.message,
+        description: error.message || "Failed to sign in with Google. Please check your configuration.",
         variant: "destructive",
       });
       setLoading(false);
@@ -217,6 +217,12 @@ export default function Auth() {
             </div>
           </CardContent>
         </Card>
+
+        <div className="mt-4 text-center text-sm text-gray-600">
+          <p>
+            If you're having trouble with Google sign-in, please contact your administrator.
+          </p>
+        </div>
       </div>
     </div>
   );
