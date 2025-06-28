@@ -20,6 +20,7 @@ export default function Auth() {
   const { toast } = useToast();
 
   useEffect(() => {
+    console.log('Auth page loaded, user:', user);
     if (user) {
       navigate('/');
     }
@@ -27,6 +28,8 @@ export default function Auth() {
 
   const handleEmailAuth = async (isSignUp: boolean) => {
     setLoading(true);
+    console.log('Attempting auth:', isSignUp ? 'signup' : 'signin');
+    
     try {
       if (isSignUp) {
         const { error } = await supabase.auth.signUp({
@@ -57,6 +60,7 @@ export default function Auth() {
         });
       }
     } catch (error: any) {
+      console.error('Auth error:', error);
       toast({
         title: "Authentication Error",
         description: error.message,
@@ -69,6 +73,8 @@ export default function Auth() {
 
   const handleGoogleAuth = async () => {
     setLoading(true);
+    console.log('Attempting Google auth');
+    
     try {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
@@ -79,6 +85,7 @@ export default function Auth() {
       
       if (error) throw error;
     } catch (error: any) {
+      console.error('Google auth error:', error);
       toast({
         title: "Authentication Error",
         description: error.message,
