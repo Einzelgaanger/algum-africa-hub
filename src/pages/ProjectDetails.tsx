@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { supabase, Project, Task, Comment, ActivityLog } from "@/lib/supabase";
-import { ArrowLeft, Calendar, User, MessageSquare, CheckList, Activity } from "lucide-react";
+import { ArrowLeft, Calendar, User, MessageSquare, ListTodo, Activity } from "lucide-react";
 import { ProjectTasks } from "@/components/ProjectTasks";
 import { ProjectComments } from "@/components/ProjectComments";
 import { ProjectLogs } from "@/components/ProjectLogs";
@@ -201,9 +201,9 @@ export default function ProjectDetails() {
 
       {/* Tabs */}
       <Tabs defaultValue="tasks" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="tasks" className="flex items-center gap-2">
-            <CheckList className="h-4 w-4" />
+            <ListTodo className="h-4 w-4" />
             Tasks ({tasks.length})
           </TabsTrigger>
           <TabsTrigger value="comments" className="flex items-center gap-2">

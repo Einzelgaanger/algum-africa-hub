@@ -4,9 +4,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { supabase, ActivityLog, Project } from "@/lib/supabase";
+import { supabase, ActivityLog } from "@/lib/supabase";
 import { Activity, Search, User, Calendar, FolderOpen } from "lucide-react";
 import { Link } from "react-router-dom";
+
+interface Project {
+  id: string;
+  title: string;
+}
 
 export default function ActivityLogs() {
   const [logs, setLogs] = useState<ActivityLog[]>([]);

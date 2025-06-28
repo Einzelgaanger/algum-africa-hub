@@ -9,7 +9,175 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      activity_logs: {
+        Row: {
+          action: string
+          created_at: string
+          details: string
+          id: string
+          project_id: string
+          user_id: string
+          user_name: string
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          details: string
+          id?: string
+          project_id: string
+          user_id: string
+          user_name: string
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          details?: string
+          id?: string
+          project_id?: string
+          user_id?: string
+          user_name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "activity_logs_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      comments: {
+        Row: {
+          content: string
+          created_at: string
+          created_by: string
+          created_by_name: string
+          id: string
+          project_id: string | null
+          task_id: string | null
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          created_by: string
+          created_by_name: string
+          id?: string
+          project_id?: string | null
+          task_id?: string | null
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          created_by?: string
+          created_by_name?: string
+          id?: string
+          project_id?: string | null
+          task_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "comments_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "comments_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "tasks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      projects: {
+        Row: {
+          created_at: string
+          created_by: string
+          deadline: string
+          description: string | null
+          goals: string | null
+          id: string
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          deadline: string
+          description?: string | null
+          goals?: string | null
+          id?: string
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          deadline?: string
+          description?: string | null
+          goals?: string | null
+          id?: string
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      tasks: {
+        Row: {
+          created_at: string
+          created_by: string
+          created_by_name: string
+          description: string | null
+          file_name: string | null
+          file_url: string | null
+          id: string
+          project_id: string
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          created_by_name: string
+          description?: string | null
+          file_name?: string | null
+          file_url?: string | null
+          id?: string
+          project_id: string
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          created_by_name?: string
+          description?: string | null
+          file_name?: string | null
+          file_url?: string | null
+          id?: string
+          project_id?: string
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tasks_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
