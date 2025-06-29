@@ -27,6 +27,8 @@ export interface Task {
   file_url?: string;
   file_name?: string;
   status: 'todo' | 'in_progress' | 'done';
+  priority?: 'low' | 'medium' | 'high' | 'urgent';
+  deadline?: string;
   created_by: string;
   created_by_name: string;
   created_at: string;
@@ -50,5 +52,13 @@ export interface ActivityLog {
   user_name: string;
   action: string;
   details: string;
+  created_at: string;
+}
+
+export interface CommentReadStatus {
+  id: string;
+  user_id: string;
+  comment_id: string;
+  read_at: string;
   created_at: string;
 }

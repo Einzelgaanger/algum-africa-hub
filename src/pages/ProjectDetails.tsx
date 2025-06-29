@@ -6,11 +6,12 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { supabase, Project, Task, Comment, ActivityLog } from "@/lib/supabase";
-import { ArrowLeft, Calendar, User, MessageSquare, ListTodo, Activity } from "lucide-react";
+import { ArrowLeft, Calendar, User, MessageSquare, ListTodo, Activity, Bell } from "lucide-react";
 import { ProjectTasks } from "@/components/ProjectTasks";
 import { ProjectComments } from "@/components/ProjectComments";
 import { ProjectLogs } from "@/components/ProjectLogs";
 import { ProjectStatusUpdate } from "@/components/ProjectStatusUpdate";
+import { useNotifications } from "@/hooks/useNotifications";
 
 export default function ProjectDetails() {
   const { id } = useParams<{ id: string }>();
@@ -20,6 +21,7 @@ export default function ProjectDetails() {
   const [comments, setComments] = useState<Comment[]>([]);
   const [logs, setLogs] = useState<ActivityLog[]>([]);
   const [loading, setLoading] = useState(true);
+  const { unreadCount } = useNotifications(id);
 
   useEffect(() => {
     if (id) {
@@ -165,6 +167,12 @@ export default function ProjectDetails() {
           <div className="flex items-center gap-3 mb-2">
             <h1 className="text-3xl font-bold text-gray-900">{project.title}</h1>
             {getStatusBadge(project.status)}
+            {unreadCount > 0 && (
+              <div className="flex items-center gap-1 bg-red-100 text-red-800 px-2 py-1 rounded-full text-xs">
+                <Bell className="h-3 w-3" />
+                {unreadCount} unread
+              </div>
+            )}
           </div>
           <p className="text-gray-600">{project.description}</p>
         </div>
@@ -205,6 +213,11 @@ export default function ProjectDetails() {
           <TabsTrigger value="tasks" className="flex items-center gap-2">
             <ListTodo className="h-4 w-4" />
             Tasks ({tasks.length})
+            {unreadCount > 0 && (
+              <span className="bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                {unreadCount}
+              </span>
+            )}
           </TabsTrigger>
           <TabsTrigger value="comments" className="flex items-center gap-2">
             <MessageSquare className="h-4 w-4" />

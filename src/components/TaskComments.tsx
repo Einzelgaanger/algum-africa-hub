@@ -6,6 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { supabase, Comment } from "@/lib/supabase";
 import { Send, MessageSquare, User, Calendar } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useNotifications } from "@/hooks/useNotifications";
 
 interface TaskCommentsProps {
   taskId: string;
@@ -19,6 +20,7 @@ export function TaskComments({ taskId, projectId, onCommentsChange }: TaskCommen
   const [loading, setLoading] = useState(false);
   const [fetchingComments, setFetchingComments] = useState(true);
   const { toast } = useToast();
+  const { markCommentAsRead } = useNotifications();
 
   useEffect(() => {
     fetchComments();
@@ -34,6 +36,13 @@ export function TaskComments({ taskId, projectId, onCommentsChange }: TaskCommen
 
       if (error) throw error;
       setComments(data || []);
+
+      // Mark all comments as read when viewing them
+      if (data) {
+        data.forEach(comment => {
+          markCommentAsRead(comment.id);
+        });
+      }
     } catch (error) {
       console.error('Error fetching comments:', error);
     } finally {

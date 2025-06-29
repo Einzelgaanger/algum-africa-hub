@@ -6,10 +6,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { supabase, Task } from "@/lib/supabase";
-import { Plus, Upload, Calendar, User, MessageSquare, CheckCircle, Clock, AlertCircle } from "lucide-react";
+import { Plus, Upload, Calendar, User, MessageSquare, CheckCircle, Clock, AlertCircle, Bell } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { TaskComments } from "./TaskComments";
+import { useNotifications } from "@/hooks/useNotifications";
 
 interface ProjectTasksProps {
   projectId: string;
@@ -23,10 +25,35 @@ export function ProjectTasks({ projectId, tasks, onTasksChange }: ProjectTasksPr
   const [newTaskData, setNewTaskData] = useState({
     title: "",
     description: "",
+    deadline: "",
+    priority: "medium" as const,
   });
   const [file, setFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
+  const { unreadCount } = useNotifications(projectId);
+
+  // Sort tasks by deadline (upcoming first), then by priority
+  const sortedTasks = [...tasks].sort((a, b) => {
+    // First sort by deadline (upcoming first)
+    if (a.deadline && b.deadline) {
+      const dateA = new Date(a.deadline);
+      const dateB = new Date(b.deadline);
+      if (dateA.getTime() !== dateB.getTime()) {
+        return dateA.getTime() - dateB.getTime();
+      }
+    } else if (a.deadline && !b.deadline) {
+      return -1;
+    } else if (!a.deadline && b.deadline) {
+      return 1;
+    }
+
+    // Then sort by priority
+    const priorityOrder = { urgent: 0, high: 1, medium: 2, low: 3 };
+    const aPriority = priorityOrder[a.priority || 'medium'];
+    const bPriority = priorityOrder[b.priority || 'medium'];
+    return aPriority - bPriority;
+  });
 
   const handleCreateTask = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -64,6 +91,8 @@ export function ProjectTasks({ projectId, tasks, onTasksChange }: ProjectTasksPr
           project_id: projectId,
           title: newTaskData.title,
           description: newTaskData.description,
+          deadline: newTaskData.deadline || null,
+          priority: newTaskData.priority,
           file_url: fileUrl,
           file_name: fileName,
           status: 'todo',
@@ -89,7 +118,7 @@ export function ProjectTasks({ projectId, tasks, onTasksChange }: ProjectTasksPr
         description: "Task created successfully.",
       });
 
-      setNewTaskData({ title: "", description: "" });
+      setNewTaskData({ title: "", description: "", deadline: "", priority: "medium" });
       setFile(null);
       setShowNewTaskForm(false);
       onTasksChange();
@@ -155,6 +184,28 @@ export function ProjectTasks({ projectId, tasks, onTasksChange }: ProjectTasksPr
     );
   };
 
+  const getPriorityBadge = (priority: string) => {
+    const variants = {
+      urgent: "bg-red-100 text-red-800 border-red-300",
+      high: "bg-orange-100 text-orange-800 border-orange-300",
+      medium: "bg-blue-100 text-blue-800 border-blue-300",
+      low: "bg-gray-100 text-gray-800 border-gray-300"
+    };
+
+    const labels = {
+      urgent: "Urgent",
+      high: "High",
+      medium: "Medium",
+      low: "Low"
+    };
+
+    return (
+      <Badge className={`${variants[priority as keyof typeof variants]} border`}>
+        {labels[priority as keyof typeof labels]}
+      </Badge>
+    );
+  };
+
   const getStatusIcon = (status: string) => {
     switch (status) {
       case 'done':
@@ -166,10 +217,33 @@ export function ProjectTasks({ projectId, tasks, onTasksChange }: ProjectTasksPr
     }
   };
 
+  const isTaskOverdue = (deadline: string) => {
+    if (!deadline) return false;
+    return new Date(deadline) < new Date();
+  };
+
+  const getDaysUntilDeadline = (deadline: string) => {
+    if (!deadline) return null;
+    const today = new Date();
+    const deadlineDate = new Date(deadline);
+    const diffTime = deadlineDate.getTime() - today.getTime();
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    return diffDays;
+  };
+
   return (
     <div className="space-y-6">
-      {/* Add New Task Button */}
-      <div className="flex justify-end">
+      {/* Header with notification badge */}
+      <div className="flex justify-between items-center">
+        <div className="flex items-center gap-2">
+          <h2 className="text-xl font-semibold">Tasks</h2>
+          {unreadCount > 0 && (
+            <div className="flex items-center gap-1 bg-red-100 text-red-800 px-2 py-1 rounded-full text-xs">
+              <Bell className="h-3 w-3" />
+              {unreadCount} unread
+            </div>
+          )}
+        </div>
         <Button
           onClick={() => setShowNewTaskForm(!showNewTaskForm)}
           className="bg-red-600 hover:bg-red-700"
@@ -187,15 +261,42 @@ export function ProjectTasks({ projectId, tasks, onTasksChange }: ProjectTasksPr
           </CardHeader>
           <CardContent>
             <form onSubmit={handleCreateTask} className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="taskTitle">Task Title *</Label>
+                  <Input
+                    id="taskTitle"
+                    value={newTaskData.title}
+                    onChange={(e) => setNewTaskData(prev => ({ ...prev, title: e.target.value }))}
+                    placeholder="Enter task title"
+                    required
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="taskDeadline">Deadline</Label>
+                  <Input
+                    id="taskDeadline"
+                    type="date"
+                    value={newTaskData.deadline}
+                    onChange={(e) => setNewTaskData(prev => ({ ...prev, deadline: e.target.value }))}
+                  />
+                </div>
+              </div>
+
               <div className="space-y-2">
-                <Label htmlFor="taskTitle">Task Title *</Label>
-                <Input
-                  id="taskTitle"
-                  value={newTaskData.title}
-                  onChange={(e) => setNewTaskData(prev => ({ ...prev, title: e.target.value }))}
-                  placeholder="Enter task title"
-                  required
-                />
+                <Label htmlFor="taskPriority">Priority</Label>
+                <Select value={newTaskData.priority} onValueChange={(value: any) => setNewTaskData(prev => ({ ...prev, priority: value }))}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="low">Low</SelectItem>
+                    <SelectItem value="medium">Medium</SelectItem>
+                    <SelectItem value="high">High</SelectItem>
+                    <SelectItem value="urgent">Urgent</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
 
               <div className="space-y-2">
@@ -241,7 +342,7 @@ export function ProjectTasks({ projectId, tasks, onTasksChange }: ProjectTasksPr
       )}
 
       {/* Tasks List */}
-      {tasks.length === 0 ? (
+      {sortedTasks.length === 0 ? (
         <Card>
           <CardContent className="text-center py-12">
             <CheckCircle className="h-12 w-12 text-gray-400 mx-auto mb-4" />
@@ -251,102 +352,124 @@ export function ProjectTasks({ projectId, tasks, onTasksChange }: ProjectTasksPr
         </Card>
       ) : (
         <div className="space-y-4">
-          {tasks.map((task) => (
-            <Card key={task.id}>
-              <CardHeader>
-                <div className="flex items-start justify-between">
-                  <div className="flex items-center gap-3">
-                    {getStatusIcon(task.status)}
-                    <div>
-                      <CardTitle className="text-lg">{task.title}</CardTitle>
-                      {task.description && (
-                        <p className="text-gray-600 mt-1">{task.description}</p>
+          {sortedTasks.map((task) => {
+            const daysUntilDeadline = task.deadline ? getDaysUntilDeadline(task.deadline) : null;
+            const isOverdue = task.deadline ? isTaskOverdue(task.deadline) : false;
+
+            return (
+              <Card key={task.id} className={`${isOverdue ? 'border-red-300 bg-red-50' : ''}`}>
+                <CardHeader>
+                  <div className="flex items-start justify-between">
+                    <div className="flex items-center gap-3">
+                      {getStatusIcon(task.status)}
+                      <div>
+                        <CardTitle className="text-lg">{task.title}</CardTitle>
+                        {task.description && (
+                          <p className="text-gray-600 mt-1">{task.description}</p>
+                        )}
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      {getStatusBadge(task.status)}
+                      {getPriorityBadge(task.priority || 'medium')}
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => setSelectedTask(selectedTask?.id === task.id ? null : task)}
+                        className="relative"
+                      >
+                        <MessageSquare className="h-4 w-4 mr-1" />
+                        Comments
+                      </Button>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="flex items-center justify-between text-sm text-gray-500">
+                    <div className="flex items-center gap-4">
+                      <div className="flex items-center gap-1">
+                        <User className="h-4 w-4" />
+                        <span>{task.created_by_name}</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <Calendar className="h-4 w-4" />
+                        <span>{new Date(task.created_at).toLocaleDateString()}</span>
+                      </div>
+                      {task.deadline && (
+                        <div className={`flex items-center gap-1 ${isOverdue ? 'text-red-600 font-medium' : daysUntilDeadline !== null && daysUntilDeadline <= 3 ? 'text-yellow-600 font-medium' : ''}`}>
+                          <Calendar className="h-4 w-4" />
+                          <span>
+                            Due: {new Date(task.deadline).toLocaleDateString()}
+                            {daysUntilDeadline !== null && (
+                              <span className="ml-1">
+                                ({isOverdue ? `${Math.abs(daysUntilDeadline)} days overdue` : 
+                                  daysUntilDeadline === 0 ? 'Due today' : 
+                                  `${daysUntilDeadline} days left`})
+                              </span>
+                            )}
+                          </span>
+                        </div>
+                      )}
+                      {task.file_url && (
+                        <div className="flex items-center gap-1">
+                          <Upload className="h-4 w-4" />
+                          <a
+                            href={task.file_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-blue-600 hover:underline"
+                          >
+                            {task.file_name}
+                          </a>
+                        </div>
+                      )}
+                    </div>
+                    
+                    <div className="flex gap-1">
+                      {task.status !== 'todo' && (
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => handleStatusUpdate(task.id, 'todo')}
+                        >
+                          To Do
+                        </Button>
+                      )}
+                      {task.status !== 'in_progress' && (
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => handleStatusUpdate(task.id, 'in_progress')}
+                        >
+                          In Progress
+                        </Button>
+                      )}
+                      {task.status !== 'done' && (
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => handleStatusUpdate(task.id, 'done')}
+                        >
+                          Done
+                        </Button>
                       )}
                     </div>
                   </div>
-                  <div className="flex items-center gap-2">
-                    {getStatusBadge(task.status)}
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => setSelectedTask(selectedTask?.id === task.id ? null : task)}
-                    >
-                      <MessageSquare className="h-4 w-4 mr-1" />
-                      Comments
-                    </Button>
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex items-center justify-between text-sm text-gray-500">
-                  <div className="flex items-center gap-4">
-                    <div className="flex items-center gap-1">
-                      <User className="h-4 w-4" />
-                      <span>{task.created_by_name}</span>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <Calendar className="h-4 w-4" />
-                      <span>{new Date(task.created_at).toLocaleDateString()}</span>
-                    </div>
-                    {task.file_url && (
-                      <div className="flex items-center gap-1">
-                        <Upload className="h-4 w-4" />
-                        <a
-                          href={task.file_url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-blue-600 hover:underline"
-                        >
-                          {task.file_name}
-                        </a>
-                      </div>
-                    )}
-                  </div>
-                  
-                  <div className="flex gap-1">
-                    {task.status !== 'todo' && (
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => handleStatusUpdate(task.id, 'todo')}
-                      >
-                        To Do
-                      </Button>
-                    )}
-                    {task.status !== 'in_progress' && (
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => handleStatusUpdate(task.id, 'in_progress')}
-                      >
-                        In Progress
-                      </Button>
-                    )}
-                    {task.status !== 'done' && (
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => handleStatusUpdate(task.id, 'done')}
-                      >
-                        Done
-                      </Button>
-                    )}
-                  </div>
-                </div>
 
-                {/* Task Comments */}
-                {selectedTask?.id === task.id && (
-                  <div className="border-t pt-4">
-                    <TaskComments
-                      taskId={task.id}
-                      projectId={projectId}
-                      onCommentsChange={onTasksChange}
-                    />
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          ))}
+                  {/* Task Comments */}
+                  {selectedTask?.id === task.id && (
+                    <div className="border-t pt-4">
+                      <TaskComments
+                        taskId={task.id}
+                        projectId={projectId}
+                        onCommentsChange={onTasksChange}
+                      />
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            );
+          })}
         </div>
       )}
     </div>
