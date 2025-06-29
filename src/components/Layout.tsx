@@ -20,22 +20,22 @@ export function Layout({ children }: LayoutProps) {
 
   return (
     <SidebarProvider>
-      <div className="min-h-screen flex w-full">
+      <div className="min-h-screen flex w-full overflow-hidden">
         <AppSidebar />
-        <div className="flex-1 flex flex-col">
-          <header className={`${isMobile ? 'h-14' : 'h-16'} border-b bg-white flex items-center justify-between ${isMobile ? 'px-3' : 'px-6'}`}>
-            <div className="flex items-center gap-2 md:gap-4">
-              <SidebarTrigger />
-              <div className="flex items-center gap-2">
-                <Building2 className={`${isMobile ? 'h-5 w-5' : 'h-6 w-6'} text-red-600`} />
-                <h1 className={`font-bold text-gray-900 ${isMobile ? 'text-sm truncate max-w-32' : 'text-base'}`}>
+        <div className="flex-1 flex flex-col min-w-0">
+          <header className={`${isMobile ? 'h-14' : 'h-16'} border-b bg-white flex items-center justify-between ${isMobile ? 'px-2' : 'px-6'} flex-shrink-0`}>
+            <div className="flex items-center gap-2 min-w-0 flex-1">
+              <SidebarTrigger className="flex-shrink-0" />
+              <div className="flex items-center gap-2 min-w-0 flex-1">
+                <Building2 className={`${isMobile ? 'h-4 w-4' : 'h-6 w-6'} text-red-600 flex-shrink-0`} />
+                <h1 className={`font-bold text-gray-900 truncate ${isMobile ? 'text-xs' : 'text-base'}`}>
                   Algum Africa Capitals LLP
                 </h1>
               </div>
             </div>
             
             {user && (
-              <div className="flex items-center gap-2 md:gap-4">
+              <div className="flex items-center gap-2 flex-shrink-0">
                 {!isMobile && (
                   <span className="text-sm text-gray-600 truncate max-w-32">
                     {user.user_metadata?.full_name || user.email}
@@ -43,18 +43,18 @@ export function Layout({ children }: LayoutProps) {
                 )}
                 <Button
                   variant="outline"
-                  size={isMobile ? "sm" : "sm"}
+                  size="sm"
                   onClick={handleSignOut}
-                  className="flex items-center gap-1 md:gap-2"
+                  className="flex items-center gap-1"
                 >
-                  <LogOut className="h-4 w-4" />
-                  {!isMobile && <span>Sign Out</span>}
+                  <LogOut className="h-4 w-4 flex-shrink-0" />
+                  {!isMobile && <span className="whitespace-nowrap">Sign Out</span>}
                 </Button>
               </div>
             )}
           </header>
           
-          <main className="flex-1 overflow-auto">
+          <main className="flex-1 overflow-auto min-w-0">
             {children}
           </main>
         </div>

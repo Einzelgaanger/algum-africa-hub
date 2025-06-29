@@ -62,13 +62,13 @@ export function AppSidebar() {
 
   return (
     <Sidebar 
-      className={isCollapsed ? "w-14" : isMobile ? "w-64" : "w-64"} 
+      className={`${isCollapsed ? "w-14" : isMobile ? "w-64" : "w-64"} flex-shrink-0`} 
       collapsible="icon"
       variant={isMobile ? "floating" : "sidebar"}
     >
-      <SidebarContent className="bg-white border-r">
+      <SidebarContent className="bg-white border-r overflow-hidden">
         <SidebarGroup>
-          <SidebarGroupLabel className="text-red-600 font-semibold">
+          <SidebarGroupLabel className="text-red-600 font-semibold truncate">
             Navigation
           </SidebarGroupLabel>
           <SidebarGroupContent>
@@ -77,15 +77,17 @@ export function AppSidebar() {
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton 
                     asChild
-                    className={isMobile ? "h-12 text-base" : "h-10"}
+                    className={`${isMobile ? "h-12 text-base" : "h-10"} w-full`}
                   >
                     <NavLink
                       to={item.url}
                       end={item.url === "/"}
-                      className={({ isActive }) => getNavClassName({ isActive })}
+                      className={({ isActive }) => `${getNavClassName({ isActive })} flex items-center gap-2 w-full`}
                     >
-                      <item.icon className="h-5 w-5" />
-                      {(!isCollapsed || isMobile) && <span>{item.title}</span>}
+                      <item.icon className="h-5 w-5 flex-shrink-0" />
+                      {(!isCollapsed || isMobile) && (
+                        <span className="truncate">{item.title}</span>
+                      )}
                     </NavLink>
                   </SidebarMenuButton>
                 </SidebarMenuItem>

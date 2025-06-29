@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import { Button } from '@/components/ui/button';
@@ -94,13 +95,13 @@ export default function Auth() {
   };
 
   return (
-    <div className={`min-h-screen bg-gradient-to-br from-red-50 to-white flex items-center justify-center ${isMobile ? 'p-4' : 'p-8'}`}>
-      <div className={`w-full ${isMobile ? 'max-w-sm' : 'max-w-md'}`}>
+    <div className="min-h-screen bg-gradient-to-br from-red-50 to-white flex items-center justify-center overflow-x-hidden">
+      <div className={`w-full max-w-md ${isMobile ? 'px-4 py-6' : 'px-8 py-8'}`}>
         {/* Logo and Header */}
-        <div className="text-center mb-8">
-          <div className="flex items-center justify-center gap-3 mb-4">
-            <Building2 className={`${isMobile ? 'h-8 w-8' : 'h-10 w-10'} text-red-600`} />
-            <h1 className={`font-bold text-red-600 ${isMobile ? 'text-lg' : 'text-xl'}`}>
+        <div className="text-center mb-6">
+          <div className="flex items-center justify-center gap-2 mb-3">
+            <Building2 className="h-8 w-8 text-red-600 flex-shrink-0" />
+            <h1 className="font-bold text-red-600 text-lg truncate">
               Algum Africa Capitals
             </h1>
           </div>
@@ -116,18 +117,18 @@ export default function Auth() {
           </TabsList>
 
           {/* Sign In Tab */}
-          <TabsContent value="signin">
-            <Card>
-              <CardHeader className={isMobile ? 'pb-4' : ''}>
-                <CardTitle className={isMobile ? 'text-lg' : 'text-xl'}>Welcome Back</CardTitle>
-                <CardDescription>
+          <TabsContent value="signin" className="w-full">
+            <Card className="w-full">
+              <CardHeader className="pb-4">
+                <CardTitle className="text-lg">Welcome Back</CardTitle>
+                <CardDescription className="text-sm">
                   Sign in to your account to continue
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <form onSubmit={handleSignIn} className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="signin-email">Email</Label>
+                    <Label htmlFor="signin-email" className="text-sm">Email</Label>
                     <div className="relative">
                       <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                       <Input
@@ -136,14 +137,14 @@ export default function Auth() {
                         placeholder="Enter your email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        className="pl-10"
+                        className="pl-10 w-full"
                         required
                       />
                     </div>
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="signin-password">Password</Label>
+                    <Label htmlFor="signin-password" className="text-sm">Password</Label>
                     <div className="relative">
                       <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                       <Input
@@ -152,7 +153,7 @@ export default function Auth() {
                         placeholder="Enter your password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
-                        className="pl-10"
+                        className="pl-10 w-full"
                         required
                       />
                     </div>
@@ -188,7 +189,7 @@ export default function Auth() {
                   onClick={handleGoogleSignIn}
                   disabled={loading}
                 >
-                  <svg className="w-4 h-4 mr-2" viewBox="0 0 24 24">
+                  <svg className="w-4 h-4 mr-2 flex-shrink-0" viewBox="0 0 24 24">
                     <path
                       fill="currentColor"
                       d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -206,25 +207,25 @@ export default function Auth() {
                       d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
                     />
                   </svg>
-                  Continue with Google
+                  <span className="truncate">Continue with Google</span>
                 </Button>
               </CardContent>
             </Card>
           </TabsContent>
 
           {/* Sign Up Tab */}
-          <TabsContent value="signup">
-            <Card>
-              <CardHeader className={isMobile ? 'pb-4' : ''}>
-                <CardTitle className={isMobile ? 'text-lg' : 'text-xl'}>Create Account</CardTitle>
-                <CardDescription>
+          <TabsContent value="signup" className="w-full">
+            <Card className="w-full">
+              <CardHeader className="pb-4">
+                <CardTitle className="text-lg">Create Account</CardTitle>
+                <CardDescription className="text-sm">
                   Join Algum Africa Capitals project management hub
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <form onSubmit={handleSignUp} className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="signup-name">Full Name</Label>
+                    <Label htmlFor="signup-name" className="text-sm">Full Name</Label>
                     <div className="relative">
                       <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                       <Input
@@ -233,14 +234,14 @@ export default function Auth() {
                         placeholder="Enter your full name"
                         value={fullName}
                         onChange={(e) => setFullName(e.target.value)}
-                        className="pl-10"
+                        className="pl-10 w-full"
                         required
                       />
                     </div>
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="signup-email">Email</Label>
+                    <Label htmlFor="signup-email" className="text-sm">Email</Label>
                     <div className="relative">
                       <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                       <Input
@@ -249,14 +250,14 @@ export default function Auth() {
                         placeholder="Enter your email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        className="pl-10"
+                        className="pl-10 w-full"
                         required
                       />
                     </div>
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="signup-password">Password</Label>
+                    <Label htmlFor="signup-password" className="text-sm">Password</Label>
                     <div className="relative">
                       <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                       <Input
@@ -265,7 +266,7 @@ export default function Auth() {
                         placeholder="Create a password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
-                        className="pl-10"
+                        className="pl-10 w-full"
                         required
                         minLength={6}
                       />
@@ -305,7 +306,7 @@ export default function Auth() {
                   onClick={handleGoogleSignIn}
                   disabled={loading}
                 >
-                  <svg className="w-4 h-4 mr-2" viewBox="0 0 24 24">
+                  <svg className="w-4 h-4 mr-2 flex-shrink-0" viewBox="0 0 24 24">
                     <path
                       fill="currentColor"
                       d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -323,14 +324,14 @@ export default function Auth() {
                       d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
                     />
                   </svg>
-                  Continue with Google
+                  <span className="truncate">Continue with Google</span>
                 </Button>
               </CardContent>
             </Card>
           </TabsContent>
         </Tabs>
 
-        <p className="text-center text-xs text-gray-500 mt-6">
+        <p className="text-center text-xs text-gray-500 mt-6 px-4">
           By signing up, you agree to our terms of service and privacy policy.
         </p>
       </div>

@@ -72,79 +72,86 @@ export function ProjectComments({ projectId, comments, onCommentsChange }: Proje
   };
 
   return (
-    <div className={`space-y-4 md:space-y-6 ${isMobile ? 'p-4' : ''}`}>
-      {/* Add Comment Form */}
-      <Card>
-        <CardHeader>
-          <CardTitle className={`flex items-center gap-2 ${isMobile ? 'text-lg' : 'text-xl'}`}>
-            <MessageSquare className="h-5 w-5" />
-            Add Comment
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmitComment} className="space-y-4">
-            <Textarea
-              value={newComment}
-              onChange={(e) => setNewComment(e.target.value)}
-              placeholder="Share your thoughts about this project..."
-              rows={isMobile ? 3 : 4}
-              className="resize-none"
-            />
-            <div className={`flex ${isMobile ? 'flex-col' : 'justify-end'}`}>
-              <Button
-                type="submit"
-                disabled={loading || !newComment.trim()}
-                className={`bg-red-600 hover:bg-red-700 ${isMobile ? 'w-full' : ''}`}
-              >
-                {loading ? (
-                  "Posting..."
-                ) : (
-                  <>
-                    <Send className="h-4 w-4 mr-2" />
-                    Post Comment
-                  </>
-                )}
-              </Button>
-            </div>
-          </form>
-        </CardContent>
-      </Card>
+    <div className={`w-full overflow-hidden ${isMobile ? 'px-2 py-4' : 'p-6'}`}>
+      <div className="max-w-full space-y-4">
+        {/* Add Comment Form */}
+        <Card className="w-full">
+          <CardHeader>
+            <CardTitle className={`flex items-center gap-2 ${isMobile ? 'text-base' : 'text-lg'}`}>
+              <MessageSquare className="h-5 w-5 flex-shrink-0" />
+              Add Comment
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleSubmitComment} className="space-y-4">
+              <Textarea
+                value={newComment}
+                onChange={(e) => setNewComment(e.target.value)}
+                placeholder="Share your thoughts about this project..."
+                rows={isMobile ? 3 : 4}
+                className="w-full resize-none"
+              />
+              <div className="flex justify-end">
+                <Button
+                  type="submit"
+                  disabled={loading || !newComment.trim()}
+                  className="bg-red-600 hover:bg-red-700"
+                  size={isMobile ? "sm" : "default"}
+                >
+                  {loading ? (
+                    "Posting..."
+                  ) : (
+                    <>
+                      <Send className="h-4 w-4 mr-2" />
+                      Post Comment
+                    </>
+                  )}
+                </Button>
+              </div>
+            </form>
+          </CardContent>
+        </Card>
 
-      {/* Comments List */}
-      <div className="space-y-4">
-        <h3 className={`font-medium text-gray-900 ${isMobile ? 'text-base' : 'text-lg'}`}>
-          Comments ({comments.length})
-        </h3>
-        
-        {comments.length === 0 ? (
-          <Card>
-            <CardContent className="text-center py-8">
-              <MessageSquare className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-              <h4 className={`font-medium text-gray-900 mb-2 ${isMobile ? 'text-base' : 'text-lg'}`}>No comments yet</h4>
-              <p className="text-gray-600 text-sm">Start the conversation by adding the first comment!</p>
-            </CardContent>
-          </Card>
-        ) : (
-          <div className="space-y-4">
-            {comments.map((comment) => (
-              <Card key={comment.id}>
-                <CardContent className="p-4">
-                  <div className={`flex ${isMobile ? 'flex-col gap-2' : 'items-start justify-between'} mb-3`}>
-                    <div className="flex items-center gap-2">
-                      <User className="h-4 w-4 text-gray-600" />
-                      <span className="font-medium text-gray-900 truncate">{comment.created_by_name}</span>
+        {/* Comments List */}
+        <div className="space-y-4 w-full">
+          <h3 className={`font-medium text-gray-900 ${isMobile ? 'text-base' : 'text-lg'}`}>
+            Comments ({comments.length})
+          </h3>
+          
+          {comments.length === 0 ? (
+            <Card className="w-full">
+              <CardContent className="text-center py-8">
+                <MessageSquare className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                <h4 className="font-medium text-gray-900 mb-2">No comments yet</h4>
+                <p className="text-gray-600 text-sm">Start the conversation by adding the first comment!</p>
+              </CardContent>
+            </Card>
+          ) : (
+            <div className="space-y-4 w-full">
+              {comments.map((comment) => (
+                <Card key={comment.id} className="w-full">
+                  <CardContent className="p-4">
+                    <div className="space-y-3">
+                      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                        <div className="flex items-center gap-2">
+                          <User className="h-4 w-4 text-gray-600 flex-shrink-0" />
+                          <span className="font-medium text-gray-900 truncate">{comment.created_by_name}</span>
+                        </div>
+                        <div className="flex items-center gap-1 text-sm text-gray-500">
+                          <Calendar className="h-4 w-4 flex-shrink-0" />
+                          <span className="whitespace-nowrap">{new Date(comment.created_at).toLocaleString()}</span>
+                        </div>
+                      </div>
+                      <p className="text-gray-800 whitespace-pre-wrap break-words leading-relaxed">
+                        {comment.content}
+                      </p>
                     </div>
-                    <div className="flex items-center gap-1 text-sm text-gray-500">
-                      <Calendar className="h-4 w-4" />
-                      <span>{new Date(comment.created_at).toLocaleString()}</span>
-                    </div>
-                  </div>
-                  <p className="text-gray-800 whitespace-pre-wrap break-words">{comment.content}</p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        )}
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

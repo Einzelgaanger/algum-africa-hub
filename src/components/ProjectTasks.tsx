@@ -180,7 +180,7 @@ export function ProjectTasks({ projectId, tasks, onTasksChange }: ProjectTasksPr
     };
 
     return (
-      <Badge className={`${variants[status as keyof typeof variants]} ${isMobile ? 'text-xs px-2 py-1' : ''}`}>
+      <Badge className={`${variants[status as keyof typeof variants]} text-xs px-2 py-1 whitespace-nowrap`}>
         {labels[status as keyof typeof labels]}
       </Badge>
     );
@@ -202,7 +202,7 @@ export function ProjectTasks({ projectId, tasks, onTasksChange }: ProjectTasksPr
     };
 
     return (
-      <Badge className={`${variants[priority as keyof typeof variants]} border ${isMobile ? 'text-xs px-2 py-1' : ''}`}>
+      <Badge className={`${variants[priority as keyof typeof variants]} border text-xs px-2 py-1 whitespace-nowrap`}>
         {labels[priority as keyof typeof labels]}
       </Badge>
     );
@@ -211,11 +211,11 @@ export function ProjectTasks({ projectId, tasks, onTasksChange }: ProjectTasksPr
   const getStatusIcon = (status: string) => {
     switch (status) {
       case 'done':
-        return <CheckCircle className="h-4 w-4 text-green-600" />;
+        return <CheckCircle className="h-4 w-4 text-green-600 flex-shrink-0" />;
       case 'in_progress':
-        return <Clock className="h-4 w-4 text-yellow-600" />;
+        return <Clock className="h-4 w-4 text-yellow-600 flex-shrink-0" />;
       default:
-        return <AlertCircle className="h-4 w-4 text-gray-600" />;
+        return <AlertCircle className="h-4 w-4 text-gray-600 flex-shrink-0" />;
     }
   };
 
@@ -234,179 +234,193 @@ export function ProjectTasks({ projectId, tasks, onTasksChange }: ProjectTasksPr
   };
 
   return (
-    <div className={`space-y-4 md:space-y-6 ${isMobile ? 'p-4' : ''}`}>
-      {/* Header with notification badge */}
-      <div className="flex justify-between items-center">
-        <div className="flex items-center gap-2">
-          <h2 className={`font-semibold ${isMobile ? 'text-lg' : 'text-xl'}`}>Tasks</h2>
-          {unreadCount > 0 && (
-            <div className="flex items-center gap-1 bg-red-100 text-red-800 px-2 py-1 rounded-full text-xs">
-              <Bell className="h-3 w-3" />
-              {unreadCount} unread
-            </div>
-          )}
-        </div>
-        <Button
-          onClick={() => setShowNewTaskForm(!showNewTaskForm)}
-          className="bg-red-600 hover:bg-red-700"
-          size={isMobile ? "sm" : "default"}
-        >
-          <Plus className="h-4 w-4 mr-2" />
-          {isMobile ? "Add" : "Add Task"}
-        </Button>
-      </div>
-
-      {/* New Task Form */}
-      {showNewTaskForm && (
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle className={isMobile ? 'text-lg' : 'text-xl'}>Create New Task</CardTitle>
-            {isMobile && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setShowNewTaskForm(false)}
-              >
-                <X className="h-4 w-4" />
-              </Button>
+    <div className={`w-full overflow-hidden ${isMobile ? 'px-2 py-4' : 'p-6'}`}>
+      <div className="max-w-full space-y-4">
+        {/* Header with notification badge */}
+        <div className="flex justify-between items-center gap-2">
+          <div className="flex items-center gap-2 min-w-0 flex-1">
+            <h2 className={`font-semibold truncate ${isMobile ? 'text-lg' : 'text-xl'}`}>Tasks</h2>
+            {unreadCount > 0 && (
+              <div className="flex items-center gap-1 bg-red-100 text-red-800 px-2 py-1 rounded-full text-xs whitespace-nowrap">
+                <Bell className="h-3 w-3 flex-shrink-0" />
+                {unreadCount}
+              </div>
             )}
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleCreateTask} className="space-y-4">
-              <div className={`grid ${isMobile ? 'grid-cols-1' : 'grid-cols-1 md:grid-cols-2'} gap-4`}>
-                <div className="space-y-2">
-                  <Label htmlFor="taskTitle">Task Title *</Label>
-                  <Input
-                    id="taskTitle"
-                    value={newTaskData.title}
-                    onChange={(e) => setNewTaskData(prev => ({ ...prev, title: e.target.value }))}
-                    placeholder="Enter task title"
-                    required
-                  />
-                </div>
+          </div>
+          <Button
+            onClick={() => setShowNewTaskForm(!showNewTaskForm)}
+            className="bg-red-600 hover:bg-red-700 flex-shrink-0"
+            size={isMobile ? "sm" : "default"}
+          >
+            <Plus className="h-4 w-4 mr-1" />
+            {isMobile ? "Add" : "Add Task"}
+          </Button>
+        </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="taskDeadline">Deadline</Label>
-                  <Input
-                    id="taskDeadline"
-                    type="date"
-                    value={newTaskData.deadline}
-                    onChange={(e) => setNewTaskData(prev => ({ ...prev, deadline: e.target.value }))}
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="taskPriority">Priority</Label>
-                <Select value={newTaskData.priority} onValueChange={(value: any) => setNewTaskData(prev => ({ ...prev, priority: value }))}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="low">Low</SelectItem>
-                    <SelectItem value="medium">Medium</SelectItem>
-                    <SelectItem value="high">High</SelectItem>
-                    <SelectItem value="urgent">Urgent</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="taskDescription">Description</Label>
-                <Textarea
-                  id="taskDescription"
-                  value={newTaskData.description}
-                  onChange={(e) => setNewTaskData(prev => ({ ...prev, description: e.target.value }))}
-                  placeholder="Describe the task..."
-                  rows={3}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="taskFile">Attach File</Label>
-                <Input
-                  id="taskFile"
-                  type="file"
-                  onChange={(e) => setFile(e.target.files?.[0] || null)}
-                  className="cursor-pointer"
-                />
-              </div>
-
-              <div className={`flex ${isMobile ? 'flex-col gap-2' : 'justify-end gap-2'}`}>
+        {/* New Task Form */}
+        {showNewTaskForm && (
+          <Card className="w-full">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className={isMobile ? 'text-base' : 'text-lg'}>Create New Task</CardTitle>
+              {isMobile && (
                 <Button
-                  type="button"
-                  variant="outline"
+                  variant="ghost"
+                  size="sm"
                   onClick={() => setShowNewTaskForm(false)}
-                  className={isMobile ? 'w-full' : ''}
+                  className="p-1 h-auto"
                 >
-                  Cancel
+                  <X className="h-4 w-4" />
                 </Button>
-                <Button
-                  type="submit"
-                  disabled={loading}
-                  className={`bg-red-600 hover:bg-red-700 ${isMobile ? 'w-full' : ''}`}
-                >
-                  {loading ? "Creating..." : "Create Task"}
-                </Button>
-              </div>
-            </form>
-          </CardContent>
-        </Card>
-      )}
+              )}
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <form onSubmit={handleCreateTask} className="space-y-4">
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="taskTitle" className="text-sm">Task Title *</Label>
+                    <Input
+                      id="taskTitle"
+                      value={newTaskData.title}
+                      onChange={(e) => setNewTaskData(prev => ({ ...prev, title: e.target.value }))}
+                      placeholder="Enter task title"
+                      className="w-full"
+                      required
+                    />
+                  </div>
 
-      {/* Tasks List */}
-      {sortedTasks.length === 0 ? (
-        <Card>
-          <CardContent className="text-center py-12">
-            <CheckCircle className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-            <h3 className={`font-medium text-gray-900 mb-2 ${isMobile ? 'text-base' : 'text-lg'}`}>No tasks yet</h3>
-            <p className="text-gray-600 text-sm">Create your first task to get started</p>
-          </CardContent>
-        </Card>
-      ) : (
-        <div className="space-y-4">
-          {sortedTasks.map((task) => {
-            const daysUntilDeadline = task.deadline ? getDaysUntilDeadline(task.deadline) : null;
-            const isOverdue = task.deadline ? isTaskOverdue(task.deadline) : false;
-
-            return (
-              <Card key={task.id} className={`${isOverdue ? 'border-red-300 bg-red-50' : ''}`}>
-                <CardHeader className={isMobile ? 'pb-2' : ''}>
-                  <div className="flex items-start justify-between">
-                    <div className="flex items-center gap-3 flex-1">
-                      {getStatusIcon(task.status)}
-                      <div className="flex-1 min-w-0">
-                        <CardTitle className={`${isMobile ? 'text-base' : 'text-lg'} break-words`}>{task.title}</CardTitle>
-                        {task.description && (
-                          <p className={`text-gray-600 mt-1 ${isMobile ? 'text-sm' : ''} break-words`}>{task.description}</p>
-                        )}
-                      </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="taskDeadline" className="text-sm">Deadline</Label>
+                      <Input
+                        id="taskDeadline"
+                        type="date"
+                        value={newTaskData.deadline}
+                        onChange={(e) => setNewTaskData(prev => ({ ...prev, deadline: e.target.value }))}
+                        className="w-full"
+                      />
                     </div>
-                    <div className={`flex ${isMobile ? 'flex-col' : 'items-center'} gap-2 ml-2`}>
-                      {getStatusBadge(task.status)}
-                      {getPriorityBadge(task.priority || 'medium')}
+
+                    <div className="space-y-2">
+                      <Label htmlFor="taskPriority" className="text-sm">Priority</Label>
+                      <Select value={newTaskData.priority} onValueChange={(value: any) => setNewTaskData(prev => ({ ...prev, priority: value }))}>
+                        <SelectTrigger className="w-full">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="low">Low</SelectItem>
+                          <SelectItem value="medium">Medium</SelectItem>
+                          <SelectItem value="high">High</SelectItem>
+                          <SelectItem value="urgent">Urgent</SelectItem>
+                        </SelectContent>
+                      </Select>
                     </div>
                   </div>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  {/* Task metadata */}
-                  <div className={`flex ${isMobile ? 'flex-col gap-2' : 'items-center justify-between'} text-sm text-gray-500`}>
-                    <div className={`flex ${isMobile ? 'flex-col gap-1' : 'items-center gap-4'}`}>
-                      <div className="flex items-center gap-1">
-                        <User className="h-4 w-4" />
+
+                  <div className="space-y-2">
+                    <Label htmlFor="taskDescription" className="text-sm">Description</Label>
+                    <Textarea
+                      id="taskDescription"
+                      value={newTaskData.description}
+                      onChange={(e) => setNewTaskData(prev => ({ ...prev, description: e.target.value }))}
+                      placeholder="Describe the task..."
+                      rows={3}
+                      className="w-full resize-none"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="taskFile" className="text-sm">Attach File</Label>
+                    <Input
+                      id="taskFile"
+                      type="file"
+                      onChange={(e) => setFile(e.target.files?.[0] || null)}
+                      className="w-full cursor-pointer"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex flex-col sm:flex-row gap-2 pt-2">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => setShowNewTaskForm(false)}
+                    className="w-full sm:w-auto order-2 sm:order-1"
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    type="submit"
+                    disabled={loading}
+                    className="bg-red-600 hover:bg-red-700 w-full sm:w-auto order-1 sm:order-2"
+                  >
+                    {loading ? "Creating..." : "Create Task"}
+                  </Button>
+                </div>
+              </form>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Tasks List */}
+        {sortedTasks.length === 0 ? (
+          <Card className="w-full">
+            <CardContent className="text-center py-8">
+              <CheckCircle className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+              <h3 className="font-medium text-gray-900 mb-2">No tasks yet</h3>
+              <p className="text-gray-600 text-sm">Create your first task to get started</p>
+            </CardContent>
+          </Card>
+        ) : (
+          <div className="space-y-4 w-full">
+            {sortedTasks.map((task) => {
+              const daysUntilDeadline = task.deadline ? getDaysUntilDeadline(task.deadline) : null;
+              const isOverdue = task.deadline ? isTaskOverdue(task.deadline) : false;
+
+              return (
+                <Card key={task.id} className={`w-full ${isOverdue ? 'border-red-300 bg-red-50' : ''}`}>
+                  <CardHeader className="pb-3">
+                    <div className="space-y-3">
+                      <div className="flex items-start gap-3">
+                        {getStatusIcon(task.status)}
+                        <div className="flex-1 min-w-0">
+                          <CardTitle className={`${isMobile ? 'text-base' : 'text-lg'} break-words leading-tight`}>
+                            {task.title}
+                          </CardTitle>
+                          {task.description && (
+                            <p className={`text-gray-600 mt-2 ${isMobile ? 'text-sm' : ''} break-words leading-relaxed`}>
+                              {task.description}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                      
+                      <div className="flex flex-wrap gap-2">
+                        {getStatusBadge(task.status)}
+                        {getPriorityBadge(task.priority || 'medium')}
+                      </div>
+                    </div>
+                  </CardHeader>
+                  
+                  <CardContent className="space-y-4 pt-0">
+                    {/* Task metadata */}
+                    <div className="space-y-2 text-sm text-gray-500">
+                      <div className="flex items-center gap-2">
+                        <User className="h-4 w-4 flex-shrink-0" />
                         <span className="truncate">{task.created_by_name}</span>
                       </div>
-                      <div className="flex items-center gap-1">
-                        <Calendar className="h-4 w-4" />
+                      
+                      <div className="flex items-center gap-2">
+                        <Calendar className="h-4 w-4 flex-shrink-0" />
                         <span>Created: {new Date(task.created_at).toLocaleDateString()}</span>
                       </div>
+                      
                       {task.deadline && (
-                        <div className={`flex items-center gap-1 ${isOverdue ? 'text-red-600 font-medium' : daysUntilDeadline !== null && daysUntilDeadline <= 3 ? 'text-yellow-600 font-medium' : ''}`}>
-                          <Calendar className="h-4 w-4" />
+                        <div className={`flex items-center gap-2 ${isOverdue ? 'text-red-600 font-medium' : daysUntilDeadline !== null && daysUntilDeadline <= 3 ? 'text-yellow-600 font-medium' : ''}`}>
+                          <Calendar className="h-4 w-4 flex-shrink-0" />
                           <span className="break-words">
                             Due: {new Date(task.deadline).toLocaleDateString()}
                             {daysUntilDeadline !== null && (
-                              <span className="ml-1">
+                              <span className="block sm:inline sm:ml-1">
                                 ({isOverdue ? `${Math.abs(daysUntilDeadline)} days overdue` : 
                                   daysUntilDeadline === 0 ? 'Due today' : 
                                   `${daysUntilDeadline} days left`})
@@ -415,9 +429,10 @@ export function ProjectTasks({ projectId, tasks, onTasksChange }: ProjectTasksPr
                           </span>
                         </div>
                       )}
+                      
                       {task.file_url && (
-                        <div className="flex items-center gap-1">
-                          <Upload className="h-4 w-4" />
+                        <div className="flex items-center gap-2">
+                          <Upload className="h-4 w-4 flex-shrink-0" />
                           <a
                             href={task.file_url}
                             target="_blank"
@@ -430,13 +445,14 @@ export function ProjectTasks({ projectId, tasks, onTasksChange }: ProjectTasksPr
                       )}
                     </div>
                     
-                    <div className={`flex ${isMobile ? 'flex-wrap' : ''} gap-1`}>
+                    {/* Status update buttons */}
+                    <div className="flex flex-wrap gap-2">
                       {task.status !== 'todo' && (
                         <Button
                           size="sm"
                           variant="outline"
                           onClick={() => handleStatusUpdate(task.id, 'todo')}
-                          className={isMobile ? 'text-xs' : ''}
+                          className="text-xs"
                         >
                           To Do
                         </Button>
@@ -446,7 +462,7 @@ export function ProjectTasks({ projectId, tasks, onTasksChange }: ProjectTasksPr
                           size="sm"
                           variant="outline"
                           onClick={() => handleStatusUpdate(task.id, 'in_progress')}
-                          className={isMobile ? 'text-xs' : ''}
+                          className="text-xs"
                         >
                           In Progress
                         </Button>
@@ -456,43 +472,43 @@ export function ProjectTasks({ projectId, tasks, onTasksChange }: ProjectTasksPr
                           size="sm"
                           variant="outline"
                           onClick={() => handleStatusUpdate(task.id, 'done')}
-                          className={isMobile ? 'text-xs' : ''}
+                          className="text-xs"
                         >
                           Done
                         </Button>
                       )}
                     </div>
-                  </div>
 
-                  {/* Comments button */}
-                  <div className="flex justify-between items-center pt-2 border-t">
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => setSelectedTask(selectedTask?.id === task.id ? null : task)}
-                      className="relative"
-                    >
-                      <MessageSquare className="h-4 w-4 mr-1" />
-                      {isMobile ? "Comments" : "View Comments"}
-                    </Button>
-                  </div>
-
-                  {/* Task Comments */}
-                  {selectedTask?.id === task.id && (
-                    <div className="border-t pt-4">
-                      <TaskComments
-                        taskId={task.id}
-                        projectId={projectId}
-                        onCommentsChange={onTasksChange}
-                      />
+                    {/* Comments button */}
+                    <div className="flex justify-between items-center pt-2 border-t">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => setSelectedTask(selectedTask?.id === task.id ? null : task)}
+                        className="relative"
+                      >
+                        <MessageSquare className="h-4 w-4 mr-2" />
+                        Comments
+                      </Button>
                     </div>
-                  )}
-                </CardContent>
-              </Card>
-            );
-          })}
-        </div>
-      )}
+
+                    {/* Task Comments */}
+                    {selectedTask?.id === task.id && (
+                      <div className="border-t pt-4">
+                        <TaskComments
+                          taskId={task.id}
+                          projectId={projectId}
+                          onCommentsChange={onTasksChange}
+                        />
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              );
+            })}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
