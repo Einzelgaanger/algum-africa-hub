@@ -18,6 +18,7 @@ import {
   BarChart3, 
   Settings 
 } from "lucide-react";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const navigationItems = [
   {
@@ -50,6 +51,7 @@ const navigationItems = [
 export function AppSidebar() {
   const { state } = useSidebar();
   const location = useLocation();
+  const isMobile = useIsMobile();
 
   const isCollapsed = state === "collapsed";
 
@@ -59,7 +61,11 @@ export function AppSidebar() {
       : "hover:bg-gray-100 text-gray-700";
 
   return (
-    <Sidebar className={isCollapsed ? "w-14" : "w-64"} collapsible="icon">
+    <Sidebar 
+      className={isCollapsed ? "w-14" : isMobile ? "w-64" : "w-64"} 
+      collapsible="icon"
+      variant={isMobile ? "floating" : "sidebar"}
+    >
       <SidebarContent className="bg-white border-r">
         <SidebarGroup>
           <SidebarGroupLabel className="text-red-600 font-semibold">
@@ -69,14 +75,17 @@ export function AppSidebar() {
             <SidebarMenu>
               {navigationItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
+                  <SidebarMenuButton 
+                    asChild
+                    className={isMobile ? "h-12 text-base" : "h-10"}
+                  >
                     <NavLink
                       to={item.url}
                       end={item.url === "/"}
                       className={({ isActive }) => getNavClassName({ isActive })}
                     >
-                      <item.icon className="h-4 w-4" />
-                      {!isCollapsed && <span>{item.title}</span>}
+                      <item.icon className="h-5 w-5" />
+                      {(!isCollapsed || isMobile) && <span>{item.title}</span>}
                     </NavLink>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
