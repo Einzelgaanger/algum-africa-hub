@@ -38,6 +38,7 @@ export default function NewProject() {
           deadline: formData.deadline,
           status: 'todo',
           created_by: user.id,
+          owner_id: user.id,
         })
         .select()
         .single();
@@ -57,7 +58,7 @@ export default function NewProject() {
 
       toast({
         title: "Success!",
-        description: "Project created successfully.",
+        description: "Project created successfully. You can now invite collaborators!",
       });
 
       navigate(`/projects/${data.id}`);
@@ -91,7 +92,7 @@ export default function NewProject() {
         </Button>
         <div>
           <h1 className="text-3xl font-bold text-gray-900">New Project</h1>
-          <p className="text-gray-600">Create a new client project</p>
+          <p className="text-gray-600">Create a collaborative project and invite your team</p>
         </div>
       </div>
 
@@ -160,7 +161,7 @@ export default function NewProject() {
               <Button
                 type="submit"
                 disabled={loading}
-                className="bg-red-600 hover:bg-red-700"
+                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
               >
                 {loading ? (
                   <div className="flex items-center gap-2">

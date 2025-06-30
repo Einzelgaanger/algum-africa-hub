@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { supabase, Project } from "@/lib/supabase";
 import { Link } from "react-router-dom";
-import { Search, Plus, Calendar, User, CheckCircle, Clock, AlertCircle } from "lucide-react";
+import { Search, Plus, Calendar, User, CheckCircle, Clock, AlertCircle, Users } from "lucide-react";
 
 export default function Projects() {
   const [projects, setProjects] = useState<Project[]>([]);
@@ -45,7 +45,7 @@ export default function Projects() {
     if (searchTerm) {
       filtered = filtered.filter(project =>
         project.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        project.description.toLowerCase().includes(searchTerm.toLowerCase())
+        project.description?.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
 
@@ -107,11 +107,11 @@ export default function Projects() {
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Projects</h1>
-          <p className="text-gray-600">Manage all your client projects</p>
+          <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Projects</h1>
+          <p className="text-gray-600">Manage your collaborative projects</p>
         </div>
         <Link to="/projects/new">
-          <Button className="bg-red-600 hover:bg-red-700">
+          <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
             <Plus className="h-4 w-4 mr-2" />
             New Project
           </Button>
@@ -134,6 +134,7 @@ export default function Projects() {
             variant={statusFilter === "all" ? "default" : "outline"}
             onClick={() => setStatusFilter("all")}
             size="sm"
+            className={statusFilter === "all" ? "bg-gradient-to-r from-blue-600 to-purple-600" : ""}
           >
             All
           </Button>
@@ -141,6 +142,7 @@ export default function Projects() {
             variant={statusFilter === "todo" ? "default" : "outline"}
             onClick={() => setStatusFilter("todo")}
             size="sm"
+            className={statusFilter === "todo" ? "bg-gradient-to-r from-blue-600 to-purple-600" : ""}
           >
             To Do
           </Button>
@@ -148,6 +150,7 @@ export default function Projects() {
             variant={statusFilter === "in_progress" ? "default" : "outline"}
             onClick={() => setStatusFilter("in_progress")}
             size="sm"
+            className={statusFilter === "in_progress" ? "bg-gradient-to-r from-blue-600 to-purple-600" : ""}
           >
             In Progress
           </Button>
@@ -155,6 +158,7 @@ export default function Projects() {
             variant={statusFilter === "done" ? "default" : "outline"}
             onClick={() => setStatusFilter("done")}
             size="sm"
+            className={statusFilter === "done" ? "bg-gradient-to-r from-blue-600 to-purple-600" : ""}
           >
             Done
           </Button>
@@ -166,19 +170,19 @@ export default function Projects() {
         <Card>
           <CardContent className="text-center py-12">
             <div className="text-center">
-              <CheckCircle className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+              <Users className="h-12 w-12 text-gray-400 mx-auto mb-4" />
               <h3 className="text-lg font-medium text-gray-900 mb-2">
                 {searchTerm || statusFilter !== "all" ? "No projects found" : "No projects yet"}
               </h3>
               <p className="text-gray-600 mb-4">
                 {searchTerm || statusFilter !== "all" 
                   ? "Try adjusting your search or filters" 
-                  : "Get started by creating your first project"
+                  : "Get started by creating your first collaborative project"
                 }
               </p>
               {!searchTerm && statusFilter === "all" && (
                 <Link to="/projects/new">
-                  <Button className="bg-red-600 hover:bg-red-700">
+                  <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
                     <Plus className="h-4 w-4 mr-2" />
                     Create Project
                   </Button>
@@ -190,7 +194,7 @@ export default function Projects() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredProjects.map((project) => (
-            <Card key={project.id} className="hover:shadow-lg transition-shadow">
+            <Card key={project.id} className="hover:shadow-lg transition-shadow border-l-4 border-l-blue-500">
               <CardHeader>
                 <div className="flex items-start justify-between">
                   <div className="flex items-center gap-2">
@@ -212,12 +216,16 @@ export default function Projects() {
                     <User className="h-4 w-4" />
                     <span>Created: {new Date(project.created_at).toLocaleDateString()}</span>
                   </div>
+                  <div className="flex items-center gap-2">
+                    <Users className="h-4 w-4" />
+                    <span>Collaborative Project</span>
+                  </div>
                 </div>
 
                 <div className="pt-4 border-t">
                   <Link to={`/projects/${project.id}`}>
-                    <Button className="w-full bg-red-600 hover:bg-red-700">
-                      View Project
+                    <Button className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
+                      Open Project
                     </Button>
                   </Link>
                 </div>

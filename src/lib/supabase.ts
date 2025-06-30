@@ -15,6 +15,7 @@ export interface Project {
   deadline: string;
   status: 'todo' | 'in_progress' | 'done';
   created_by: string;
+  owner_id: string;
   created_at: string;
   updated_at: string;
 }
@@ -61,4 +62,33 @@ export interface CommentReadStatus {
   comment_id: string;
   read_at: string;
   created_at: string;
+}
+
+export interface Profile {
+  id: string;
+  email: string;
+  full_name: string;
+  avatar_url?: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ProjectMember {
+  id: string;
+  project_id: string;
+  user_id: string;
+  role: 'owner' | 'admin' | 'member';
+  joined_at: string;
+}
+
+export interface ProjectInvitation {
+  id: string;
+  project_id: string;
+  email: string;
+  role: 'admin' | 'member';
+  invited_by: string;
+  invited_at: string;
+  accepted_at?: string;
+  expires_at: string;
+  status: 'pending' | 'accepted' | 'declined' | 'expired';
 }

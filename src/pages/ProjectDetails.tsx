@@ -6,21 +6,25 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { supabase, Project, Task, Comment, ActivityLog } from "@/lib/supabase";
-import { ArrowLeft, Calendar, User, MessageSquare, ListTodo, Activity, Bell } from "lucide-react";
+import { ArrowLeft, Calendar, User, MessageSquare, ListTodo, Activity, Bell, Users } from "lucide-react";
 import { ProjectTasks } from "@/components/ProjectTasks";
 import { ProjectComments } from "@/components/ProjectComments";
 import { ProjectLogs } from "@/components/ProjectLogs";
 import { ProjectStatusUpdate } from "@/components/ProjectStatusUpdate";
+import { ProjectInvitations } from "@/components/ProjectInvitations";
 import { useNotifications } from "@/hooks/useNotifications";
+import { useAuth } from "@/components/AuthProvider";
 
 export default function ProjectDetails() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [project, setProject] = useState<Project | null>(null);
   const [tasks, setTasks] = useState<Task[]>([]);
   const [comments, setComments] = useState<Comment[]>([]);
   const [logs, setLogs] = useState<ActivityLog[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isOwner, setIsOwner] = useState(false);
   const { unreadCount } = useNotifications(id);
 
   useEffect(() => {
@@ -40,6 +44,7 @@ export default function ProjectDetails() {
 
       if (projectError) throw projectError;
       setProject(projectData);
+      setIsOwner(projectData.owner_id === user?.id);
 
       // Fetch tasks
       const { data: tasksData } = await supabase
@@ -165,8 +170,11 @@ export default function ProjectDetails() {
         </Button>
         <div className="flex-1">
           <div className="flex items-center gap-3 mb-2">
-            <h1 className="text-3xl font-bold text-gray-900">{project.title}</h1>
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">{project.title}</h1>
             {getStatusBadge(project.status)}
+            {isOwner && (
+              <Badge className="bg-purple-100 text-purple-800">Owner</Badge>
+            )}
             {unreadCount > 0 && (
               <div className="flex items-center gap-1 bg-red-100 text-red-800 px-2 py-1 rounded-full text-xs">
                 <Bell className="h-3 w-3" />
@@ -176,14 +184,16 @@ export default function ProjectDetails() {
           </div>
           <p className="text-gray-600">{project.description}</p>
         </div>
-        <ProjectStatusUpdate 
-          currentStatus={project.status}
-          onStatusUpdate={handleStatusUpdate}
-        />
+        {isOwner && (
+          <ProjectStatusUpdate 
+            currentStatus={project.status}
+            onStatusUpdate={handleStatusUpdate}
+          />
+        )}
       </div>
 
       {/* Project Overview */}
-      <Card>
+      <Card className="border-l-4 border-l-blue-500">
         <CardHeader>
           <CardTitle>Project Overview</CardTitle>
         </CardHeader>
@@ -209,19 +219,23 @@ export default function ProjectDetails() {
 
       {/* Tabs */}
       <Tabs defaultValue="tasks" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-3">
+        <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="tasks" className="flex items-center gap-2">
             <ListTodo className="h-4 w-4" />
             Tasks ({tasks.length})
+          </TabsTrigger>
+          <TabsTrigger value="team" className="flex items-center gap-2">
+            <Users className="h-4 w-4" />
+            Team
+          </TabsTrigger>
+          <TabsTrigger value="comments" className="flex items-center gap-2">
+            <MessageSquare className="h-4 w-4" />
+            Comments ({comments.length})
             {unreadCount > 0 && (
               <span className="bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
                 {unreadCount}
               </span>
             )}
-          </TabsTrigger>
-          <TabsTrigger value="comments" className="flex items-center gap-2">
-            <MessageSquare className="h-4 w-4" />
-            Comments ({comments.length})
           </TabsTrigger>
           <TabsTrigger value="logs" className="flex items-center gap-2">
             <Activity className="h-4 w-4" />
@@ -234,6 +248,13 @@ export default function ProjectDetails() {
             projectId={project.id}
             tasks={tasks}
             onTasksChange={fetchProjectData}
+          />
+        </TabsContent>
+
+        <TabsContent value="team">
+          <ProjectInvitations
+            projectId={project.id}
+            isOwner={isOwner}
           />
         </TabsContent>
 

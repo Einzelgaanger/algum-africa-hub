@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Mail, Lock, User, ArrowRight } from 'lucide-react';
+import { Mail, Lock, User, ArrowRight, Users, Rocket } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useIsMobile } from '@/hooks/use-mobile';
 
@@ -37,8 +37,8 @@ export default function Auth() {
       if (error) throw error;
 
       toast({
-        title: 'Check your email!',
-        description: 'We sent you a confirmation link to complete your registration.',
+        title: 'Welcome to CollabSpace!',
+        description: 'Check your email for a confirmation link to complete your registration.',
       });
     } catch (error: any) {
       toast({
@@ -96,38 +96,48 @@ export default function Auth() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-red-50 to-white flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-center justify-center p-4">
       <div className="w-full max-w-md mx-auto">
         {/* Logo and Header */}
         <div className="text-center mb-8">
           <div className="flex items-center justify-center mb-6">
-            <img 
-              src="/algumlogo.svg" 
-              alt="Algum Africa Capitals LLP" 
-              className="h-16 w-auto max-w-full"
-            />
+            <div className="w-16 h-16 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg">
+              <Users className="h-8 w-8 text-white" />
+            </div>
           </div>
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">
-            Project Management Hub
+          <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-2">
+            CollabSpace
           </h1>
           <p className="text-gray-600 text-sm">
-            Streamline your projects with professional tools
+            Open source collaborative project management
           </p>
         </div>
 
+        {/* Features Preview */}
+        <div className="grid grid-cols-2 gap-4 mb-8">
+          <div className="flex items-center gap-2 p-3 bg-white/50 rounded-lg backdrop-blur-sm border border-white/20">
+            <Rocket className="h-4 w-4 text-blue-600" />
+            <span className="text-sm font-medium text-gray-700">Create Projects</span>
+          </div>
+          <div className="flex items-center gap-2 p-3 bg-white/50 rounded-lg backdrop-blur-sm border border-white/20">
+            <Users className="h-4 w-4 text-purple-600" />
+            <span className="text-sm font-medium text-gray-700">Invite Team</span>
+          </div>
+        </div>
+
         <Tabs defaultValue="signin" className="w-full">
-          <TabsList className="grid w-full grid-cols-2 mb-6 h-12">
+          <TabsList className="grid w-full grid-cols-2 mb-6 h-12 bg-white/50 backdrop-blur-sm">
             <TabsTrigger value="signin" className="text-sm font-medium">Sign In</TabsTrigger>
             <TabsTrigger value="signup" className="text-sm font-medium">Sign Up</TabsTrigger>
           </TabsList>
 
           {/* Sign In Tab */}
           <TabsContent value="signin" className="w-full">
-            <Card className="w-full shadow-lg">
+            <Card className="w-full shadow-xl bg-white/80 backdrop-blur-sm border-white/20">
               <CardHeader className="pb-6">
                 <CardTitle className="text-xl text-center">Welcome Back</CardTitle>
                 <CardDescription className="text-center">
-                  Sign in to access your projects
+                  Sign in to manage your collaborative projects
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
@@ -142,7 +152,7 @@ export default function Auth() {
                         placeholder="Enter your email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        className="pl-10 h-12 text-base"
+                        className="pl-10 h-12 text-base bg-white/80"
                         required
                       />
                     </div>
@@ -158,7 +168,7 @@ export default function Auth() {
                         placeholder="Enter your password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
-                        className="pl-10 h-12 text-base"
+                        className="pl-10 h-12 text-base bg-white/80"
                         required
                       />
                     </div>
@@ -166,7 +176,7 @@ export default function Auth() {
 
                   <Button
                     type="submit"
-                    className="w-full bg-red-600 hover:bg-red-700 h-12 text-base font-medium"
+                    className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 h-12 text-base font-medium"
                     disabled={loading}
                   >
                     {loading ? 'Signing In...' : (
@@ -190,7 +200,7 @@ export default function Auth() {
                 <Button
                   type="button"
                   variant="outline"
-                  className="w-full h-12 text-base"
+                  className="w-full h-12 text-base bg-white/80"
                   onClick={handleGoogleSignIn}
                   disabled={loading}
                 >
@@ -220,11 +230,11 @@ export default function Auth() {
 
           {/* Sign Up Tab */}
           <TabsContent value="signup" className="w-full">
-            <Card className="w-full shadow-lg">
+            <Card className="w-full shadow-xl bg-white/80 backdrop-blur-sm border-white/20">
               <CardHeader className="pb-6">
-                <CardTitle className="text-xl text-center">Create Account</CardTitle>
+                <CardTitle className="text-xl text-center">Join CollabSpace</CardTitle>
                 <CardDescription className="text-center">
-                  Join Algum Africa Capitals project hub
+                  Create your account and start collaborating
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
@@ -239,7 +249,7 @@ export default function Auth() {
                         placeholder="Enter your full name"
                         value={fullName}
                         onChange={(e) => setFullName(e.target.value)}
-                        className="pl-10 h-12 text-base"
+                        className="pl-10 h-12 text-base bg-white/80"
                         required
                       />
                     </div>
@@ -255,7 +265,7 @@ export default function Auth() {
                         placeholder="Enter your email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        className="pl-10 h-12 text-base"
+                        className="pl-10 h-12 text-base bg-white/80"
                         required
                       />
                     </div>
@@ -271,7 +281,7 @@ export default function Auth() {
                         placeholder="Create a password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
-                        className="pl-10 h-12 text-base"
+                        className="pl-10 h-12 text-base bg-white/80"
                         required
                         minLength={6}
                       />
@@ -283,7 +293,7 @@ export default function Auth() {
 
                   <Button
                     type="submit"
-                    className="w-full bg-red-600 hover:bg-red-700 h-12 text-base font-medium"
+                    className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 h-12 text-base font-medium"
                     disabled={loading}
                   >
                     {loading ? 'Creating Account...' : (
@@ -307,7 +317,7 @@ export default function Auth() {
                 <Button
                   type="button"
                   variant="outline"
-                  className="w-full h-12 text-base"
+                  className="w-full h-12 text-base bg-white/80"
                   onClick={handleGoogleSignIn}
                   disabled={loading}
                 >
@@ -336,9 +346,10 @@ export default function Auth() {
           </TabsContent>
         </Tabs>
 
-        <p className="text-center text-xs text-gray-500 mt-6 leading-relaxed">
-          By signing up, you agree to our terms of service and privacy policy.
-        </p>
+        <div className="text-center text-xs text-gray-500 mt-6 leading-relaxed">
+          <p>Open source project management platform.</p>
+          <p className="mt-1">By signing up, you agree to our terms of service and privacy policy.</p>
+        </div>
       </div>
     </div>
   );
