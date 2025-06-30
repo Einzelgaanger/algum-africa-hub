@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Building2, Mail, Lock, User, ArrowRight } from 'lucide-react';
+import { Mail, Lock, User, ArrowRight } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useIsMobile } from '@/hooks/use-mobile';
 
@@ -99,11 +99,12 @@ export default function Auth() {
       <div className={`w-full max-w-md ${isMobile ? 'px-4 py-6' : 'px-8 py-8'}`}>
         {/* Logo and Header */}
         <div className="text-center mb-6">
-          <div className="flex items-center justify-center gap-2 mb-3">
-            <Building2 className="h-8 w-8 text-red-600 flex-shrink-0" />
-            <h1 className="font-bold text-red-600 text-lg truncate">
-              Algum Africa Capitals
-            </h1>
+          <div className="flex items-center justify-center mb-4">
+            <img 
+              src="/algumlogo.svg" 
+              alt="Algum Africa Capitals LLP" 
+              className={`${isMobile ? 'h-16' : 'h-20'} w-auto`}
+            />
           </div>
           <p className="text-gray-600 text-sm">
             Project Management Hub

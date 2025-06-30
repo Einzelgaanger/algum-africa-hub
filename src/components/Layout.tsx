@@ -2,7 +2,7 @@
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "./AppSidebar";
 import { Button } from "@/components/ui/button";
-import { LogOut, Building2 } from "lucide-react";
+import { LogOut } from "lucide-react";
 import { useAuth } from "./AuthProvider";
 import { useIsMobile } from "@/hooks/use-mobile";
 
@@ -27,10 +27,11 @@ export function Layout({ children }: LayoutProps) {
             <div className="flex items-center gap-2 min-w-0 flex-1">
               <SidebarTrigger className="flex-shrink-0" />
               <div className="flex items-center gap-2 min-w-0 flex-1">
-                <Building2 className={`${isMobile ? 'h-4 w-4' : 'h-6 w-6'} text-red-600 flex-shrink-0`} />
-                <h1 className={`font-bold text-gray-900 truncate ${isMobile ? 'text-xs' : 'text-base'}`}>
-                  Algum Africa Capitals LLP
-                </h1>
+                <img 
+                  src="/algumlogo.svg" 
+                  alt="Algum Africa Capitals LLP" 
+                  className={`${isMobile ? 'h-8' : 'h-10'} w-auto flex-shrink-0`}
+                />
               </div>
             </div>
             
