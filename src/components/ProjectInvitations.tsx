@@ -32,7 +32,7 @@ interface Member {
   profiles: {
     full_name: string;
     email: string;
-  };
+  } | null;
 }
 
 export function ProjectInvitations({ projectId, isOwner }: ProjectInvitationsProps) {
