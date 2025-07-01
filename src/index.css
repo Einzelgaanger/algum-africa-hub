@@ -3,7 +3,7 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Algum Africa Capitals Red & White Theme */
+/* CollabSpace Blue & Purple Theme */
 
 @layer base {
   :root {
@@ -16,7 +16,7 @@
     --popover: 0 0% 100%;
     --popover-foreground: 0 0% 8%;
 
-    --primary: 0 84% 50%;
+    --primary: 217 91% 60%;
     --primary-foreground: 0 0% 98%;
 
     --secondary: 0 0% 96.1%;
@@ -33,18 +33,18 @@
 
     --border: 0 0% 89.8%;
     --input: 0 0% 89.8%;
-    --ring: 0 84% 50%;
+    --ring: 217 91% 60%;
 
     --radius: 0.5rem;
 
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 0 0% 26.1%;
-    --sidebar-primary: 0 84% 50%;
+    --sidebar-primary: 217 91% 60%;
     --sidebar-primary-foreground: 0 0% 98%;
     --sidebar-accent: 0 0% 96%;
-    --sidebar-accent-foreground: 0 84% 50%;
+    --sidebar-accent-foreground: 217 91% 60%;
     --sidebar-border: 0 0% 91%;
-    --sidebar-ring: 0 84% 50%;
+    --sidebar-ring: 217 91% 60%;
   }
 
   .dark {
@@ -57,7 +57,7 @@
     --popover: 0 0% 3.9%;
     --popover-foreground: 0 0% 98%;
 
-    --primary: 0 84% 50%;
+    --primary: 217 91% 60%;
     --primary-foreground: 0 0% 98%;
 
     --secondary: 0 0% 14.9%;
@@ -74,16 +74,16 @@
 
     --border: 0 0% 14.9%;
     --input: 0 0% 14.9%;
-    --ring: 0 84% 50%;
+    --ring: 217 91% 60%;
 
     --sidebar-background: 0 0% 8%;
     --sidebar-foreground: 0 0% 95%;
-    --sidebar-primary: 0 84% 50%;
+    --sidebar-primary: 217 91% 60%;
     --sidebar-primary-foreground: 0 0% 98%;
     --sidebar-accent: 0 0% 15%;
     --sidebar-accent-foreground: 0 0% 95%;
     --sidebar-border: 0 0% 15%;
-    --sidebar-ring: 0 84% 50%;
+    --sidebar-ring: 217 91% 60%;
   }
 }
 

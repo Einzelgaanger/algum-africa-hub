@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -29,6 +28,8 @@ export default function NewProject() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('User not authenticated');
 
+      console.log('Creating project with user:', user.id);
+
       const { data, error } = await supabase
         .from('projects')
         .insert({
@@ -43,7 +44,12 @@ export default function NewProject() {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error('Project creation error:', error);
+        throw error;
+      }
+
+      console.log('Project created successfully:', data);
 
       // Log the activity
       await supabase
@@ -62,11 +68,11 @@ export default function NewProject() {
       });
 
       navigate(`/projects/${data.id}`);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error creating project:', error);
       toast({
         title: "Error",
-        description: "Failed to create project. Please try again.",
+        description: error.message || "Failed to create project. Please try again.",
         variant: "destructive",
       });
     } finally {

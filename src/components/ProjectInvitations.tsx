@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -49,17 +48,24 @@ export function ProjectInvitations({ projectId, isOwner }: ProjectInvitationsPro
 
   const fetchInvitationsAndMembers = async () => {
     try {
+      console.log('Fetching invitations and members for project:', projectId);
+
       // Fetch invitations
-      const { data: invitationsData } = await supabase
+      const { data: invitationsData, error: invitationsError } = await supabase
         .from('project_invitations')
         .select('*')
         .eq('project_id', projectId)
         .order('invited_at', { ascending: false });
 
-      setInvitations(invitationsData || []);
+      if (invitationsError) {
+        console.error('Error fetching invitations:', invitationsError);
+      } else {
+        console.log('Invitations fetched:', invitationsData);
+        setInvitations(invitationsData || []);
+      }
 
       // Fetch members with profiles
-      const { data: membersData } = await supabase
+      const { data: membersData, error: membersError } = await supabase
         .from('project_members')
         .select(`
           *,
@@ -71,7 +77,12 @@ export function ProjectInvitations({ projectId, isOwner }: ProjectInvitationsPro
         .eq('project_id', projectId)
         .order('joined_at', { ascending: false });
 
-      setMembers(membersData || []);
+      if (membersError) {
+        console.error('Error fetching members:', membersError);
+      } else {
+        console.log('Members fetched:', membersData);
+        setMembers(membersData || []);
+      }
     } catch (error) {
       console.error('Error fetching invitations and members:', error);
     }
@@ -86,6 +97,8 @@ export function ProjectInvitations({ projectId, isOwner }: ProjectInvitationsPro
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('User not authenticated');
 
+      console.log('Sending invitation from user:', user.id, 'to email:', email);
+
       // Check if user is already a member by getting member emails properly
       const memberEmails = members
         .filter(m => m.profiles !== null)
@@ -98,6 +111,7 @@ export function ProjectInvitations({ projectId, isOwner }: ProjectInvitationsPro
           description: 'This user is already a member of the project.',
           variant: 'destructive',
         });
+        setLoading(false);
         return;
       }
 
@@ -116,19 +130,27 @@ export function ProjectInvitations({ projectId, isOwner }: ProjectInvitationsPro
           description: 'An invitation has already been sent to this email.',
           variant: 'destructive',
         });
+        setLoading(false);
         return;
       }
 
-      const { error } = await supabase
+      const { data: invitationData, error } = await supabase
         .from('project_invitations')
         .insert({
           project_id: projectId,
           email: email.trim(),
           role,
           invited_by: user.id,
-        });
+        })
+        .select()
+        .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error creating invitation:', error);
+        throw error;
+      }
+
+      console.log('Invitation created:', invitationData);
 
       // Log the activity
       await supabase

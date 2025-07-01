@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -25,13 +24,32 @@ export default function Projects() {
 
   const fetchProjects = async () => {
     try {
-      const { data, error } = await supabase
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        console.log('No authenticated user');
+        setLoading(false);
+        return;
+      }
+
+      console.log('Fetching projects for user:', user.id);
+
+      // Fetch projects where user is owner or member
+      const { data: projectsData, error } = await supabase
         .from('projects')
-        .select('*')
+        .select(`
+          *,
+          project_members!inner(user_id)
+        `)
+        .or(`owner_id.eq.${user.id},project_members.user_id.eq.${user.id}`)
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
-      setProjects(data || []);
+      if (error) {
+        console.error('Error fetching projects:', error);
+        throw error;
+      }
+
+      console.log('Projects fetched:', projectsData);
+      setProjects(projectsData || []);
     } catch (error) {
       console.error('Error fetching projects:', error);
     } finally {
