@@ -28,10 +28,13 @@ export function Layout({ children }: LayoutProps) {
               <SidebarTrigger className="flex-shrink-0" />
               <div className="flex items-center gap-2 min-w-0 flex-1">
                 <img 
-                  src="/algumlogo.svg" 
-                  alt="Algum Africa Capitals LLP" 
+                  src="/logo.svg" 
+                  alt="CollabSpace" 
                   className={`${isMobile ? 'h-8' : 'h-10'} w-auto flex-shrink-0`}
                 />
+                <span className="text-lg font-semibold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                  CollabSpace
+                </span>
               </div>
             </div>
             
