@@ -86,15 +86,11 @@ export function ProjectInvitations({ projectId, isOwner }: ProjectInvitationsPro
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('User not authenticated');
 
-      // Check if user is already a member
-      const { data: existingMember } = await supabase
-        .from('project_members')
-        .select('profiles:user_id(email)')
-        .eq('project_id', projectId);
-
-      const memberEmails = existingMember
-        ?.map(m => m.profiles?.email)
-        .filter(Boolean) || [];
+      // Check if user is already a member by getting member emails properly
+      const memberEmails = members
+        .filter(m => m.profiles !== null)
+        .map(m => m.profiles!.email)
+        .filter(Boolean);
       
       if (memberEmails.includes(email)) {
         toast({
