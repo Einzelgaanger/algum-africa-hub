@@ -92,7 +92,9 @@ export function ProjectInvitations({ projectId, isOwner }: ProjectInvitationsPro
         .select('profiles:user_id(email)')
         .eq('project_id', projectId);
 
-      const memberEmails = existingMember?.map(m => m.profiles?.email).filter(Boolean) || [];
+      const memberEmails = existingMember
+        ?.map(m => m.profiles?.email)
+        .filter(Boolean) || [];
       
       if (memberEmails.includes(email)) {
         toast({
